@@ -8,5 +8,5 @@ We encountered an error while generating today's blog post.
 
 **Error Details:**
 ```
-Anthropic Error: {"type":"error","error":{"type":"not_found_error","message":"model: claude-3-5-haiku-20241022"},"request_id":"req_011CfZiwqXHaPi3VQkRdpv8t"}
+Anthropic Error: {"type":"error","error":{"type":"not_found_error","message":"model: claude-3-5-haiku-20241022"},"request_id":"req_011CfZkSABquEWxuFkKPQQzN"}
 ```
