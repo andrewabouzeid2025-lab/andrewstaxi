@@ -155,26 +155,46 @@ async function generateArticle(apiKey, catalogue) {
   const messages = [{ role: 'user', content: `Write today's SEO blog post. Date: ${todayISO()}. Use brave_search if needed.` }];
   let searches = 0;
 
-  for (let i = 0; i < MAX_ROUNDS; i++) {
-    const data = await callAnthropicRaw(apiKey, {
-      model: MODEL, max_tokens: 4000, system: SYSTEM_PROMPT.replace('${CATALOGUE}', catText).replace('${DATE}', todayISO()),
-      messages, tools: [BRAVE_TOOL]
-    });
+  try {
+    for (let i = 0; i < MAX_ROUNDS; i++) {
+      const data = await callAnthropicRaw(apiKey, {
+        model: MODEL, max_tokens: 4000, system: SYSTEM_PROMPT.replace('${CATALOGUE}', catText).replace('${DATE}', todayISO()),
+        messages, tools: [BRAVE_TOOL]
+      });
 
-    const blocks = data.content || [];
-    const toolUses = blocks.filter(b => b.type === 'tool_use');
-    if (toolUses.length === 0) return blocks.filter(b => b.type === 'text').map(b => b.text).join('').trim();
+      const blocks = data.content || [];
+      const toolUses = blocks.filter(b => b.type === 'tool_use');
+      if (toolUses.length === 0) return blocks.filter(b => b.type === 'text').map(b => b.text).join('').trim();
 
-    messages.push({ role: 'assistant', content: blocks });
-    const results = [];
-    for (const tu of toolUses) {
-      const res = searches >= MAX_SEARCHES ? 'Budget exhausted.' : await braveSearch(tu.input?.query);
-      searches++;
-      results.push({ type: 'tool_result', tool_use_id: tu.id, content: res });
+      messages.push({ role: 'assistant', content: blocks });
+      const results = [];
+      for (const tu of toolUses) {
+        const res = searches >= MAX_SEARCHES ? 'Budget exhausted.' : await braveSearch(tu.input?.query);
+        searches++;
+        results.push({ type: 'tool_result', tool_use_id: tu.id, content: res });
+      }
+      messages.push({ role: 'user', content: results });
     }
-    messages.push({ role: 'user', content: results });
+    return `---
+title: "AI Timeout Error"
+date: "${todayISO()}"
+excerpt: "The AI took too many rounds to finish."
+---
+The AI did not finish in time.`;
+  } catch (err) {
+    return `---
+title: "AI Generation Error"
+date: "${todayISO()}"
+excerpt: "Failed to generate blog post due to an API error."
+---
+We encountered an error while generating today's blog post.
+
+**Error Details:**
+\`\`\`
+${err.message}
+\`\`\`
+`;
   }
-  throw new Error('Did not finish in time.');
 }
 
 async function cloudflareImage(prompt) {
