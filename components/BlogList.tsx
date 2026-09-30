@@ -12,7 +12,7 @@ export const posts = Object.entries(postsRaw).map(([path, content]) => {
   let excerpt = '';
   let image = '';
   
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (match) {
     const frontmatter = match[1];
     title = frontmatter.match(/title:\s*["']?([^"'\n]+)["']?/)?.[1] || title;
@@ -21,7 +21,7 @@ export const posts = Object.entries(postsRaw).map(([path, content]) => {
     image = frontmatter.match(/image:\s*["']?([^"'\n]+)["']?/)?.[1] || image;
   }
   
-  const body = content.replace(/^---\n[\s\S]*?\n---/, '').trim();
+  const body = content.replace(/^---\r?\n[\s\S]*?\r?\n---/, '').trim();
   
   return { slug, title, date, excerpt, image, body };
 }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

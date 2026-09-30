@@ -20,7 +20,7 @@ const CONSTANTS_FILE = path.join(process.cwd(), 'constants.ts');
 
 const SITE_URL = 'https://andrewstaxi.com';
 
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
+const MODEL = 'claude-sonnet-5-5';
 const DRAFT_MODE = String(process.env.DRAFT_MODE).toLowerCase() === 'true';
 
 const MAX_SEARCHES = 6;
@@ -55,7 +55,7 @@ function loadCatalogue() {
   const matches = source.matchAll(/id:\s*'([^']+)',\s*label:\s*'([^']+)'/g);
   for (const match of matches) {
     if (match[1] !== 'other') {
-       zones.push({ id: match[1], title: match[2], url: `${SITE_URL}/#fare-estimator` });
+      zones.push({ id: match[1], title: match[2], url: `${SITE_URL}/#fare-estimator` });
     }
   }
   return zones;
@@ -84,7 +84,7 @@ async function braveSearch(query, count = 8) {
   const apiKey = process.env.BRAVE_API_KEY;
   if (!apiKey) return 'Search is unavailable: no API key. Write from your own knowledge.';
   if (!query) return 'No query.';
-  
+
   log(`  Brave search: "${query}"`);
   try {
     const response = await fetch(`${BRAVE_URL}?q=${encodeURIComponent(query)}&count=${count}`, {
@@ -202,11 +202,11 @@ async function cloudflareImage(prompt) {
   const token = process.env.CF_API_TOKEN;
   const model = process.env.CF_IMAGE_MODEL || '@cf/black-forest-labs/flux-1-schnell';
 
-  if(!accountId || !token) {
-      log('No CF credentials, using pollinations fallback...');
-      const pUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt.slice(0,1000))}?width=1280&height=720&nologo=true`;
-      const pRes = await fetch(pUrl);
-      return { buffer: Buffer.from(await pRes.arrayBuffer()), extension: 'jpg' };
+  if (!accountId || !token) {
+    log('No CF credentials, using pollinations fallback...');
+    const pUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt.slice(0, 1000))}?width=1280&height=720&nologo=true`;
+    const pRes = await fetch(pUrl);
+    return { buffer: Buffer.from(await pRes.arrayBuffer()), extension: 'jpg' };
   }
 
   const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`, {
@@ -243,10 +243,10 @@ async function main() {
   try {
     const { buffer, extension } = await cloudflareImage(`Ultra-realistic cinematic photograph for blog post. Scene: ${visual}. No text.`);
     fs.mkdirSync(IMAGES_DIR, { recursive: true });
-    
+
     const logoPath = path.join(process.cwd(), 'public', 'logo-white.png');
     const logoBuffer = await sharp(logoPath).resize({ width: 250 }).toBuffer();
-    
+
     const finalBuffer = await sharp(buffer)
       .composite([{ input: logoBuffer, gravity: 'southeast' }])
       .toBuffer();
@@ -258,7 +258,7 @@ async function main() {
     log(`Image gen failed: ${e.message}`);
   }
 
-  const finalMd = markdown.replace(/^---[\s\S]*?---/, `$&` + '\n' + `image: "${imagePath}"`);
+  const finalMd = markdown.replace(/^---([\s\S]*?)---/, `---\nimage: "${imagePath}"$1---`);
   fs.mkdirSync(POSTS_DIR, { recursive: true });
   fs.writeFileSync(path.join(POSTS_DIR, `${slug}.md`), finalMd);
   log(`Created ${slug}.md`);
