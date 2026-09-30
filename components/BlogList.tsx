@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 // Fetch all markdown files from the blog directory
-const postsRaw = import.meta.glob('../../blog/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const postsRaw = import.meta.glob('../blog/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
 export const posts = Object.entries(postsRaw).map(([path, content]) => {
   const slug = path.split('/').pop()?.replace('.md', '');
