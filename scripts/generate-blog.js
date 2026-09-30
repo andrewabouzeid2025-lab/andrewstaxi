@@ -5,10 +5,10 @@
  * Daily SEO post generator for Andrews Taxi.
  */
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const sharp = require('sharp');
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import sharp from 'sharp';
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
