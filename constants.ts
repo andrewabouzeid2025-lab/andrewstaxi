@@ -77,12 +77,13 @@ export const ROUTE_PRICES: RouteRow[] = [
 ];
 
 export const NAV_ITEMS: NavigationItem[] = [
-  { label: 'Services', href: '#services' },
-  { label: 'Estimate Fare', href: '#fare-estimator' },
-  { label: 'Why Us', href: '#features' },
-  { label: 'How it Works', href: '#how-it-works' },
-  { label: 'Reviews', href: '#testimonials' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Estimate Fare', href: '/#fare-estimator' },
+  { label: 'Why Us', href: '/#features' },
+  { label: 'How it Works', href: '/#how-it-works' },
+  { label: 'Reviews', href: '/#testimonials' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export const SERVICES: Service[] = [

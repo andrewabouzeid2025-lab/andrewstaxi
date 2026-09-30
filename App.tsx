@@ -9,8 +9,28 @@ import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { ChatbotBooking, ChatbotRef } from './components/ChatbotBooking';
 import { SEO } from './components/SEO';
+import { Routes, Route } from 'react-router-dom';
+import { BlogList } from './components/BlogList';
+import { BlogPost } from './components/BlogPost';
 
 const FareEstimator = lazy(() => import('./components/FareEstimator').then(m => ({ default: m.FareEstimator })));
+
+function Home() {
+  return (
+    <>
+      <Hero />
+      <div className="bg-gradient-to-b from-gray-100 via-amber-100/70 via-yellow-50/60 to-gray-300/80">
+        <Services />
+        <Suspense fallback={<div className="py-20 text-center">Loading...</div>}>
+          <FareEstimator />
+        </Suspense>
+        <Features />
+        <HowItWorks />
+        <Testimonials />
+      </div>
+    </>
+  );
+}
 
 export const ChatbotContext = createContext<{ openChatbot: () => void } | null>(null);
 
@@ -31,17 +51,11 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <main>
-          <Hero />
-          {/* Gradient wrapper for content sections - creates visual depth and contrast */}
-          <div className="bg-gradient-to-b from-gray-100 via-amber-100/70 via-yellow-50/60 to-gray-300/80">
-            <Services />
-            <Suspense fallback={<div className="py-20 text-center">Loading...</div>}>
-              <FareEstimator />
-            </Suspense>
-            <Features />
-            <HowItWorks />
-            <Testimonials />
-          </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+          </Routes>
         </main>
         <Footer />
         <WhatsAppButton />
