@@ -18,7 +18,7 @@ const POSTS_DIR = path.join(process.cwd(), 'blog');
 const IMAGES_DIR = path.join(process.cwd(), 'public', 'images');
 const CONSTANTS_FILE = path.join(process.cwd(), 'constants.ts');
 
-const SITE_URL = 'https://andrewstaxi.com';
+const SITE_URL = 'https://www.andrewstaxi.com';
 
 const MODEL = 'claude-sonnet-5-5';
 const DRAFT_MODE = String(process.env.DRAFT_MODE).toLowerCase() === 'true';
@@ -203,10 +203,7 @@ async function cloudflareImage(prompt) {
   const model = process.env.CF_IMAGE_MODEL || '@cf/black-forest-labs/flux-1-schnell';
 
   if (!accountId || !token) {
-    log('No CF credentials, using pollinations fallback...');
-    const pUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt.slice(0, 1000))}?width=1280&height=720&nologo=true`;
-    const pRes = await fetch(pUrl);
-    return { buffer: Buffer.from(await pRes.arrayBuffer()), extension: 'jpg' };
+    throw new Error('Missing Cloudflare Secrets! CF_ACCOUNT_ID and CF_API_TOKEN must be set in GitHub Repository Secrets.');
   }
 
   const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`, {
@@ -227,9 +224,9 @@ async function main() {
   let title = 'taxi-post', excerpt = '';
   const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (match) {
-    const tLine = match[1].match(/^title:\\s*(.+)$/m);
+    const tLine = match[1].match(/^title:\s*(.+)$/m);
     if (tLine) title = tLine[1].trim().replace(/^["']|["']$/g, '');
-    const eLine = match[1].match(/^excerpt:\\s*(.+)$/m);
+    const eLine = match[1].match(/^excerpt:\s*(.+)$/m);
     if (eLine) excerpt = eLine[1].trim().replace(/^["']|["']$/g, '');
   }
   const slug = slugify(title) || 'taxi-post';

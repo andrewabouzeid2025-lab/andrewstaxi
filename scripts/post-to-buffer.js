@@ -4,12 +4,12 @@
  * Posts to social media using Buffer API.
  */
 const BUFFER_API_URL = 'https://api.buffer.com';
-const SITE_URL = (process.env.SITE_URL || 'https://andrewstaxi.com').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL || 'https://www.andrewstaxi.com').replace(/\/$/, '');
 
 // Replace these with the actual channel IDs for the taxi service
 const CHANNELS = {
   facebook: '6abcb11eea19ca0bde2f8f2e',
-  instagram: '6abcafe3ea19ca0bde2f88de',
+  threads: '6abd4446ea19ca0bde35ec09',
 };
 
 async function bufferRequest(token, query, variables) {
@@ -75,6 +75,13 @@ async function main() {
     text: `${title}\n\n${excerpt}\n\nRead more: ${postUrl}`,
     imageUrl,
     metadata: { facebook: { type: 'post' } },
+  });
+
+  await postToChannel(token, {
+    channelId: CHANNELS.threads,
+    label: 'Threads',
+    text: `${title}\n\n${excerpt}\n\nRead more: ${postUrl}`,
+    imageUrl,
   });
 }
 

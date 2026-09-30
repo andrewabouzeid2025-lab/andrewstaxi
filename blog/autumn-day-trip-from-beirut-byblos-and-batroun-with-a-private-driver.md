@@ -1,5 +1,5 @@
 ---
-image: ""
+image: "/images/autumn-day-trip-from-beirut-byblos-and-batroun-with-a-private-driver.jpg"
 title: "Autumn Day Trip from Beirut: Byblos and Batroun with a Private Driver"
 date: "2026-09-30"
 excerpt: "October is a good month for the Lebanese coast. Here is a simple Beirut–Byblos–Batroun day trip, with tips on getting there by taxi at a fixed price, any time of day."
