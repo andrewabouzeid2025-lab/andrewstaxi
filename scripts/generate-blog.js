@@ -20,7 +20,7 @@ const CONSTANTS_FILE = path.join(process.cwd(), 'constants.ts');
 
 const SITE_URL = 'https://andrewstaxi.com';
 
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-latest';
+const MODEL = process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-20241022';
 const DRAFT_MODE = String(process.env.DRAFT_MODE).toLowerCase() === 'true';
 
 const MAX_SEARCHES = 6;
