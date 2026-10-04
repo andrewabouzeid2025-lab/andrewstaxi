@@ -210,7 +210,24 @@ async function cloudflareImage(prompt) {
     method: 'POST', headers: { authorization: `Bearer ${token}` },
     body: JSON.stringify({ prompt: prompt.slice(0, 2000) }),
   });
-  if (!response.ok) throw new Error(`CF HTTP ${response.status}`);
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`CF HTTP ${response.status}: ${errText}`);
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    const json = await response.json();
+    if (json.success === false) {
+      throw new Error(`CF AI Error: ${JSON.stringify(json.errors)}`);
+    }
+    const b64 = json.result?.image || json.result;
+    if (typeof b64 === 'string') {
+      return { buffer: Buffer.from(b64, 'base64'), extension: 'png' };
+    }
+    throw new Error('Unexpected CF JSON response format: ' + JSON.stringify(json).slice(0, 200));
+  }
+
   return { buffer: Buffer.from(await response.arrayBuffer()), extension: 'png' };
 }
 
