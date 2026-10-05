@@ -23,6 +23,26 @@ async function bufferRequest(token, query, variables) {
   return body.data;
 }
 
+async function waitForDeployment(url, maxRetries = 40, delayMs = 10000) {
+  console.log(`Waiting for ${url} to become available...`);
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      // Use a cache-busting query parameter to avoid cached 404s
+      const checkUrl = `${url}?_t=${Date.now()}`;
+      const res = await fetch(checkUrl, { method: 'HEAD' });
+      if (res.ok) {
+        console.log(`URL is live after ${i * (delayMs / 1000)} seconds.`);
+        return true;
+      }
+    } catch (e) {
+      // Ignore network errors during polling
+    }
+    await new Promise(r => setTimeout(r, delayMs));
+  }
+  console.log(`Timeout waiting for ${url}`);
+  return false;
+}
+
 const CREATE_POST_MUTATION = `
   mutation CreatePost($input: CreatePostInput!) {
     createPost(input: $input) {
@@ -68,6 +88,12 @@ async function main() {
   let imageUrl = image ? `${SITE_URL}${image}` : '';
 
   console.log(`Posting to socials: ${postUrl}`);
+  
+  if (imageUrl) {
+    await waitForDeployment(imageUrl);
+  } else {
+    await waitForDeployment(postUrl);
+  }
 
   await postToChannel(token, {
     channelId: CHANNELS.facebook,
