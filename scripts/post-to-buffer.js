@@ -31,8 +31,14 @@ async function waitForDeployment(url, maxRetries = 40, delayMs = 10000) {
       const checkUrl = `${url}?_t=${Date.now()}`;
       const res = await fetch(checkUrl, { method: 'HEAD' });
       if (res.ok) {
-        console.log(`URL is live after ${i * (delayMs / 1000)} seconds.`);
-        return true;
+        const contentType = res.headers.get('content-type') || '';
+        const isImageRequest = url.match(/\.(png|jpg|jpeg|gif|webp)$/i);
+        if (isImageRequest && !contentType.startsWith('image/')) {
+          console.log(`Got 200 OK, but content-type is ${contentType} (expected image/). Still waiting...`);
+        } else {
+          console.log(`URL is live after ${i * (delayMs / 1000)} seconds.`);
+          return true;
+        }
       }
     } catch (e) {
       // Ignore network errors during polling
