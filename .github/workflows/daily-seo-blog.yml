@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: daily-seo-blog
-  cancel-in-progress: false
+  group: daily-seo-blog-v2
+  cancel-in-progress: true
 
 jobs:
   generate:
