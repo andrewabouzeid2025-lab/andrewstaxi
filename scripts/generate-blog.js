@@ -248,18 +248,15 @@ async function main() {
   }
   const slug = slugify(title) || 'taxi-post';
 
-  // Analyze topic (simplified)
-  let visual = PRESETS.default.visual;
-  if (markdown.toLowerCase().includes('airport')) visual = PRESETS.airport.visual;
-  else if (markdown.toLowerCase().includes('byblos') || markdown.toLowerCase().includes('batroun')) visual = PRESETS.tourism.visual;
+  const imagePrompt = `Ultra-realistic cinematic travel photography in Lebanon. Scene: ${title} - areas, landmarks, roads, or villages in Lebanon related to ${excerpt.slice(0, 50)}. Photorealistic, beautiful scenery in Lebanon, hyper-detailed. No text.`;
 
   let imagePath = '';
   try {
-    const { buffer, extension } = await cloudflareImage(`Ultra-realistic cinematic photograph for blog post. Scene: ${visual}. No text.`);
+    const { buffer, extension } = await cloudflareImage(imagePrompt);
     fs.mkdirSync(IMAGES_DIR, { recursive: true });
 
     const logoPath = path.join(process.cwd(), 'public', 'logo-white.png');
-    const logoBuffer = await sharp(logoPath).resize({ width: 250 }).toBuffer();
+    const logoBuffer = await sharp(logoPath).resize({ width: 150 }).toBuffer();
 
     const finalBuffer = await sharp(buffer)
       .composite([{ input: logoBuffer, gravity: 'southeast' }])
